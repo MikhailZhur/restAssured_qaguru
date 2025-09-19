@@ -108,6 +108,26 @@ public class ReqresInTests {
 
     }
 
+    @Test
+    void successfulLoginBestPracticeTest() {
+
+        LoginBodyModels authData = new LoginBodyModels("eve.holt@reqres.in","cityslicka");
+
+        given()
+                .log().all()
+                .header("x-api-key", "reqres-free-v1")
+                .body(authData)
+                .contentType(JSON)
+                .when()
+                .post(BASEURL + "/api/login")
+                .then()
+                .log().all()
+                .statusCode(200)
+                .body("token", is("QpwL5tke4Pnpja7X4"));
+
+    }
+
+
 
 
 }
