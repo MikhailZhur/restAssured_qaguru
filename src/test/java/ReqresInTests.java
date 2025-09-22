@@ -1,4 +1,6 @@
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
@@ -68,7 +70,7 @@ public class ReqresInTests {
                 .post(BASEURL + "/api/register")
                 .then()
                 .log().all()
-                .body("id",is(4),"token",is("QpwL5tke4Pnpja7X4"));
+                .body("id", is(4), "token", is("QpwL5tke4Pnpja7X4"));
 
     }
 
@@ -86,7 +88,7 @@ public class ReqresInTests {
                 .post(BASEURL + "/api/register")
                 .then()
                 .log().all()
-                .body("error",is("Missing email or username"));
+                .body("error", is("Missing email or username"));
 
     }
 
@@ -104,14 +106,14 @@ public class ReqresInTests {
                 .post(BASEURL + "/api/register")
                 .then()
                 .log().all()
-                .body("error",is("Missing password"));
+                .body("error", is("Missing password"));
 
     }
 
     @Test
     void successfulLoginBestPracticeTest() {
 
-        LoginBodyModels authData = new LoginBodyModels("eve.holt@reqres.in","cityslicka");
+        LoginBodyModels authData = new LoginBodyModels("eve.holt@reqres.in", "cityslicka");
 
         given()
                 .log().all()
@@ -127,7 +129,63 @@ public class ReqresInTests {
 
     }
 
+    @Tag("Negative")
+    @Test
+    void LoginTestWithOutPassword() {
 
+        LoginBodyModels authData = new LoginBodyModels("eve.holt@reqres.in", null);
 
+        given()
+                .log().all()
+                .header("x-api-key", "reqres-free-v1")
+                .body(authData)
+                .contentType(JSON)
+                .when()
+                .post(BASEURL + "/api/login")
+                .then()
+                .log().all()
+                .statusCode(400)
+                .body("error", is("Missing password"));
 
+    }
+
+    @Tag("Negative")
+    @Test
+    void LoginTestWithOutPasswordAndMail() {
+
+        LoginBodyModels authData = new LoginBodyModels();
+
+        given()
+                .log().all()
+                .header("x-api-key", "reqres-free-v1")
+                .body(authData)
+                .contentType(JSON)
+                .when()
+                .post(BASEURL + "/api/login")
+                .then()
+                .log().all()
+                .statusCode(400)
+                .body("error", is("Missing email or username"));
+
+    }
+
+    @Tag("Negative")
+    @Test
+    void LoginTestWithOutEmail() {
+
+        LoginBodyModels authData = new LoginBodyModels(null, "cityslicka");
+
+        given()
+                .log().all()
+                .header("x-api-key", "reqres-free-v1")
+                .body(authData)
+                .contentType(JSON)
+                .when()
+                .post(BASEURL + "/api/login")
+                .then()
+                .log().all()
+                .statusCode(400)
+                .body("error", is("Missing email or username"));
+
+    }
 }

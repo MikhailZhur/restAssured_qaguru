@@ -8,6 +8,9 @@ public class LoginBodyModels {
         this.password = password;
     }
 
+    public LoginBodyModels() {
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
