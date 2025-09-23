@@ -1,16 +1,16 @@
-package models;
+package models.pojo;
 
-public class LoginBodyModels {
+public class LoginBodyPojoModels {
 
     String email;
     String password;
 
-    public LoginBodyModels(String email, String password) {
+    public LoginBodyPojoModels(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
-    public LoginBodyModels() {
+    public LoginBodyPojoModels() {
     }
 
     public void setEmail(String email) {
@@ -19,14 +19,6 @@ public class LoginBodyModels {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 }
 

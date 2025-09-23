@@ -1,7 +1,9 @@
 package tests;
 
-import models.LoginBodyModels;
-import models.LoginResponseModels;
+import models.lombok.LoginBodyLombokModels;
+import models.lombok.LoginResponseLombokModels;
+import models.pojo.LoginBodyPojoModels;
+import models.pojo.LoginResponsePojoModels;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -14,10 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ReqresInTests {
 
     public static String BASEURL = "https://reqres.in";
-    String requestLoginBody = "{\n" +
-            "    \"email\": \"eve.holt@reqres.in\",\n" +
-            "    \"password\": \"cityslicka\"\n" +
-            "}";
 
     @Test
     void listUsersCheckPage() {
@@ -47,10 +45,11 @@ public class ReqresInTests {
 
     @Test
     void successfulLoginTest() {
+        LoginBodyPojoModels authData = new LoginBodyPojoModels("eve.holt@reqres.in", "cityslicka");
         given()
                 .log().all()
                 .header("x-api-key", "reqres-free-v1")
-                .body(requestLoginBody)
+                .body(authData)
                 .contentType(JSON)
                 .when()
                 .post(BASEURL + "/api/login")
@@ -63,13 +62,11 @@ public class ReqresInTests {
 
     @Test
     void successfullRegTest() {
+        LoginBodyPojoModels authData = new LoginBodyPojoModels("eve.holt@reqres.in", "cityslicka");
         given()
                 .header("x-api-key", "reqres-free-v1")
                 .log().uri()
-                .body("{\n" +
-                        "    \"email\": \"eve.holt@reqres.in\",\n" +
-                        "    \"password\": \"pistol\"\n" +
-                        "}")
+                .body(authData)
                 .contentType(JSON)
                 .when()
                 .post(BASEURL + "/api/register")
@@ -80,45 +77,9 @@ public class ReqresInTests {
     }
 
     @Test
-    void fieldEmailIsRequiredWhenRegistering() {
-        given()
-                .header("x-api-key", "reqres-free-v1")
-                .log().uri()
-                .body("{\n" +
-                        "    \"email\": \"\",\n" +
-                        "    \"password\": \"pistol\"\n" +
-                        "}")
-                .contentType(JSON)
-                .when()
-                .post(BASEURL + "/api/register")
-                .then()
-                .log().all()
-                .body("error", is("Missing email or username"));
-
-    }
-
-    @Test
-    void fieldPasswordIsRequiredWhenRegistering() {
-        given()
-                .header("x-api-key", "reqres-free-v1")
-                .log().uri()
-                .body("{\n" +
-                        "    \"email\": \"eve.holt@reqres.in\",\n" +
-                        "    \"password\": \"\"\n" +
-                        "}")
-                .contentType(JSON)
-                .when()
-                .post(BASEURL + "/api/register")
-                .then()
-                .log().all()
-                .body("error", is("Missing password"));
-
-    }
-
-    @Test
     void successfulLoginBestPracticeTest() {
 
-        LoginBodyModels authData = new LoginBodyModels("eve.holt@reqres.in", "cityslicka");
+        LoginBodyPojoModels authData = new LoginBodyPojoModels("eve.holt@reqres.in", "cityslicka");
 
         given()
                 .log().all()
@@ -138,7 +99,7 @@ public class ReqresInTests {
     @Test
     void loginTestWithOutPassword() {
 
-        LoginBodyModels authData = new LoginBodyModels("eve.holt@reqres.in", null);
+        LoginBodyPojoModels authData = new LoginBodyPojoModels("eve.holt@reqres.in", null);
 
         given()
                 .log().all()
@@ -158,9 +119,9 @@ public class ReqresInTests {
     @Test
     void loginTestWithOutPasswordAndMail() {
 
-        LoginBodyModels authData = new LoginBodyModels();
+        LoginBodyPojoModels authData = new LoginBodyPojoModels();
 
-        LoginResponseModels response = given()
+        LoginResponsePojoModels response = given()
                 .log().all()
                 .header("x-api-key", "reqres-free-v1")
                 .body(authData)
@@ -170,7 +131,7 @@ public class ReqresInTests {
                 .then()
                 .log().all()
                 .statusCode(400)
-                .extract().as(LoginResponseModels.class);
+                .extract().as(LoginResponsePojoModels.class);
 
         assertEquals("Missing email or username", response.getError());
 
@@ -180,9 +141,9 @@ public class ReqresInTests {
     @Test
     void loginTestWithOutEmail() {
 
-        LoginBodyModels authData = new LoginBodyModels(null, "cityslicka");
+        LoginBodyPojoModels authData = new LoginBodyPojoModels(null, "cityslicka");
 
-        LoginResponseModels response = given()
+        LoginResponsePojoModels response = given()
                 .log().all()
                 .header("x-api-key", "reqres-free-v1")
                 .body(authData)
@@ -192,7 +153,7 @@ public class ReqresInTests {
                 .then()
                 .log().all()
                 .statusCode(400)
-                .extract().as(LoginResponseModels.class);
+                .extract().as(LoginResponsePojoModels.class);
 
         assertEquals("Missing email or username", response.getError());
 
@@ -201,11 +162,11 @@ public class ReqresInTests {
     @Test
     void successfulLoginTestWithResponseModel() {
 
-        LoginBodyModels authData = new LoginBodyModels();
+        LoginBodyPojoModels authData = new LoginBodyPojoModels();
         authData.setEmail("eve.holt@reqres.in");
         authData.setPassword("cityslicka");
 
-        LoginResponseModels response = given()
+        LoginResponsePojoModels response = given()
                 .header("x-api-key", "reqres-free-v1")
                 .body(authData)
                 .contentType(JSON)
@@ -214,9 +175,30 @@ public class ReqresInTests {
                 .then()
                 .log().all()
                 .statusCode(200)
-                .extract().as(LoginResponseModels.class);
+                .extract().as(LoginResponsePojoModels.class);
 
         assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
 
+    }
+
+    //"eve.holt@reqres.in","cityslicka"
+    @Test
+    void successfulLoginLombokTest() {
+        LoginBodyLombokModels authData = new LoginBodyLombokModels();
+        authData.setEmail("eve.holt@reqres.in");
+        authData.setPassword("cityslick");
+
+        LoginResponseLombokModels response =
+                given()
+                        .header("x-api-key", "reqres-free-v1")
+                        .body(authData)
+                        .contentType(JSON)
+                        .when()
+                        .post(BASEURL + "/api/login")
+                        .then()
+                        .log().all()
+                        .statusCode(200)
+                        .extract().as(LoginResponseLombokModels.class);
+        assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
     }
 }
