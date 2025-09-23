@@ -1,5 +1,8 @@
 package models.pojo;
 
+import lombok.Setter;
+
+@Setter
 public class LoginBodyPojoModels {
 
     String email;
@@ -13,12 +16,5 @@ public class LoginBodyPojoModels {
     public LoginBodyPojoModels() {
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
 

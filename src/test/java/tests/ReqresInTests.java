@@ -1,5 +1,6 @@
 package tests;
 
+import io.qameta.allure.restassured.AllureRestAssured;
 import models.lombok.LoginBodyLombokModels;
 import models.lombok.LoginResponseLombokModels;
 import models.pojo.LoginBodyPojoModels;
@@ -7,7 +8,6 @@ import models.pojo.LoginResponsePojoModels;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
@@ -19,14 +19,18 @@ public class ReqresInTests {
 
     @Test
     void listUsersCheckPage() {
-        get(BASEURL + "/api/users?page=2")
+        given()
+                .header("x-api-key", "reqres-free-v1")
+                .get(BASEURL + "/api/users?page=2")
                 .then()
                 .body("page", is(2));
     }
 
     @Test
     void listUsersCheckPageWithLogResponse() {
-        get(BASEURL + "/api/users?page=2")
+        given()
+                .header("x-api-key", "reqres-free-v1")
+                .get(BASEURL + "/api/users?page=2")
                 .then()
                 .log().all()
                 .body("page", is(2));
@@ -184,12 +188,14 @@ public class ReqresInTests {
     //"eve.holt@reqres.in","cityslicka"
     @Test
     void successfulLoginLombokTest() {
+
         LoginBodyLombokModels authData = new LoginBodyLombokModels();
         authData.setEmail("eve.holt@reqres.in");
         authData.setPassword("cityslick");
 
         LoginResponseLombokModels response =
                 given()
+                        .filter(new AllureRestAssured())
                         .header("x-api-key", "reqres-free-v1")
                         .body(authData)
                         .contentType(JSON)
