@@ -1,3 +1,7 @@
+package tests;
+
+import models.LoginBodyModels;
+import models.LoginResponseModels;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -5,6 +9,7 @@ import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReqresInTests {
 
@@ -131,7 +136,7 @@ public class ReqresInTests {
 
     @Tag("Negative")
     @Test
-    void LoginTestWithOutPassword() {
+    void loginTestWithOutPassword() {
 
         LoginBodyModels authData = new LoginBodyModels("eve.holt@reqres.in", null);
 
@@ -151,11 +156,11 @@ public class ReqresInTests {
 
     @Tag("Negative")
     @Test
-    void LoginTestWithOutPasswordAndMail() {
+    void loginTestWithOutPasswordAndMail() {
 
         LoginBodyModels authData = new LoginBodyModels();
 
-        given()
+        LoginResponseModels response = given()
                 .log().all()
                 .header("x-api-key", "reqres-free-v1")
                 .body(authData)
@@ -165,17 +170,19 @@ public class ReqresInTests {
                 .then()
                 .log().all()
                 .statusCode(400)
-                .body("error", is("Missing email or username"));
+                .extract().as(LoginResponseModels.class);
+
+        assertEquals("Missing email or username", response.getError());
 
     }
 
     @Tag("Negative")
     @Test
-    void LoginTestWithOutEmail() {
+    void loginTestWithOutEmail() {
 
         LoginBodyModels authData = new LoginBodyModels(null, "cityslicka");
 
-        given()
+        LoginResponseModels response = given()
                 .log().all()
                 .header("x-api-key", "reqres-free-v1")
                 .body(authData)
@@ -185,7 +192,31 @@ public class ReqresInTests {
                 .then()
                 .log().all()
                 .statusCode(400)
-                .body("error", is("Missing email or username"));
+                .extract().as(LoginResponseModels.class);
+
+        assertEquals("Missing email or username", response.getError());
+
+    }
+
+    @Test
+    void successfulLoginTestWithResponseModel() {
+
+        LoginBodyModels authData = new LoginBodyModels();
+        authData.setEmail("eve.holt@reqres.in");
+        authData.setPassword("cityslicka");
+
+        LoginResponseModels response = given()
+                .header("x-api-key", "reqres-free-v1")
+                .body(authData)
+                .contentType(JSON)
+                .when()
+                .post(BASEURL + "/api/login")
+                .then()
+                .log().all()
+                .statusCode(200)
+                .extract().as(LoginResponseModels.class);
+
+        assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
 
     }
 }
