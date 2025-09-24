@@ -1,5 +1,6 @@
 package tests;
 
+import io.qameta.allure.restassured.AllureRestAssured;
 import models.lombok.LoginBodyLombokModels;
 import models.lombok.LoginResponseLombokModels;
 import models.pojo.LoginBodyPojoModels;
@@ -7,11 +8,12 @@ import models.pojo.LoginResponsePojoModels;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.get;
+import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static specs.LoginSpec.*;
 
 public class ReqresInTests {
 
@@ -19,14 +21,18 @@ public class ReqresInTests {
 
     @Test
     void listUsersCheckPage() {
-        get(BASEURL + "/api/users?page=2")
+        given()
+                .header("x-api-key", "reqres-free-v1")
+                .get(BASEURL + "/api/users?page=2")
                 .then()
                 .body("page", is(2));
     }
 
     @Test
     void listUsersCheckPageWithLogResponse() {
-        get(BASEURL + "/api/users?page=2")
+        given()
+                .header("x-api-key", "reqres-free-v1")
+                .get(BASEURL + "/api/users?page=2")
                 .then()
                 .log().all()
                 .body("page", is(2));
@@ -181,15 +187,16 @@ public class ReqresInTests {
 
     }
 
-    //"eve.holt@reqres.in","cityslicka"
     @Test
     void successfulLoginLombokTest() {
+
         LoginBodyLombokModels authData = new LoginBodyLombokModels();
         authData.setEmail("eve.holt@reqres.in");
         authData.setPassword("cityslick");
 
         LoginResponseLombokModels response =
                 given()
+                        .filter(new AllureRestAssured())
                         .header("x-api-key", "reqres-free-v1")
                         .body(authData)
                         .contentType(JSON)
@@ -201,4 +208,69 @@ public class ReqresInTests {
                         .extract().as(LoginResponseLombokModels.class);
         assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
     }
+
+
+    @Test
+    void successfulLoginWithStepsTest() {
+
+        LoginBodyLombokModels authData = new LoginBodyLombokModels();
+        authData.setEmail("eve.holt@reqres.in");
+        authData.setPassword("cityslick");
+
+        LoginResponseLombokModels response = step("Make request", ()->
+
+                            given()
+                                    .filter(new AllureRestAssured())
+                                    .header("x-api-key", "reqres-free-v1")
+                                    .body(authData)
+                                    .contentType(JSON)
+                                    .when()
+                                    .post(BASEURL + "/api/login")
+                                    .then()
+                                    .log().all()
+                                    .statusCode(200)
+                                    .extract().as(LoginResponseLombokModels.class));
+
+        step("Check response", ()->
+        assertEquals("QpwL5tke4Pnpja7X4", response.getToken()));
+    }
+
+    @Test
+    void successfulLoginWithSpecTest() {
+
+        LoginBodyLombokModels authData = new LoginBodyLombokModels();
+        authData.setEmail("eve.holt@reqres.in");
+        authData.setPassword("cityslick");
+
+        LoginResponseLombokModels response =
+                given(loginRequestSpec)
+                        .body(authData)
+                        .when()
+                        .post()
+                        .then()
+                        .spec(loginResponseSpecStatusCode200)
+                        .extract().as(LoginResponseLombokModels.class);
+        assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
+    }
+
+    @Tag("Negative")
+    @Test
+    void loginTestWithSpecWithOutEmail() {
+
+        LoginBodyPojoModels authData = new LoginBodyPojoModels(null, "cityslicka");
+
+        LoginResponsePojoModels response =
+                given(loginRequestSpec)
+                .body(authData)
+                .when()
+                .post()
+                .then()
+                .spec(loginResponseSpecStatusCode400)
+                .extract().as(LoginResponsePojoModels.class);
+
+        assertEquals("Missing email or username", response.getError());
+
+    }
+
+
 }
