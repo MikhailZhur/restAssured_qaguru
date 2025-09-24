@@ -25,7 +25,7 @@ public class ReqresInTests {
                 .header("x-api-key", "reqres-free-v1")
                 .get(BASEURL + "/api/users?page=2")
                 .then()
-                .body("page", is(2));
+                .body("page", is(3));
     }
 
     @Test
