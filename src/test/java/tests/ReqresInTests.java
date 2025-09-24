@@ -217,22 +217,22 @@ public class ReqresInTests {
         authData.setEmail("eve.holt@reqres.in");
         authData.setPassword("cityslick");
 
-        LoginResponseLombokModels response = step("Make request", ()->
+        LoginResponseLombokModels response = step("Make request", () ->
 
-                            given()
-                                    .filter(new AllureRestAssured())
-                                    .header("x-api-key", "reqres-free-v1")
-                                    .body(authData)
-                                    .contentType(JSON)
-                                    .when()
-                                    .post(BASEURL + "/api/login")
-                                    .then()
-                                    .log().all()
-                                    .statusCode(200)
-                                    .extract().as(LoginResponseLombokModels.class));
+                given()
+                        .filter(new AllureRestAssured())
+                        .header("x-api-key", "reqres-free-v1")
+                        .body(authData)
+                        .contentType(JSON)
+                        .when()
+                        .post(BASEURL + "/api/login")
+                        .then()
+                        .log().all()
+                        .statusCode(200)
+                        .extract().as(LoginResponseLombokModels.class));
 
-        step("Check response", ()->
-        assertEquals("QpwL5tke4Pnpja7X4", response.getToken()));
+        step("Check response", () ->
+                assertEquals("QpwL5tke4Pnpja7X4", response.getToken()));
     }
 
     @Test
@@ -261,12 +261,12 @@ public class ReqresInTests {
 
         LoginResponsePojoModels response =
                 given(loginRequestSpec)
-                .body(authData)
-                .when()
-                .post()
-                .then()
-                .spec(loginResponseSpecStatusCode400)
-                .extract().as(LoginResponsePojoModels.class);
+                        .body(authData)
+                        .when()
+                        .post()
+                        .then()
+                        .spec(loginResponseSpecStatusCode400)
+                        .extract().as(LoginResponsePojoModels.class);
 
         assertEquals("Missing email or username", response.getError());
 
