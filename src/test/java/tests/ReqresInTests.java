@@ -5,6 +5,8 @@ import models.lombok.LoginBodyLombokModels;
 import models.lombok.LoginResponseLombokModels;
 import models.pojo.LoginBodyPojoModels;
 import models.pojo.LoginResponsePojoModels;
+import models.pojo.RegisterBodyPojoModels;
+import models.pojo.RegisterResponsePojoModel;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,8 @@ import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static specs.LoginSpec.*;
+import static specs.RegisterSpec.registerRequestSpec;
+import static specs.RegisterSpec.registerResponseSpecStatusCode200;
 
 public class ReqresInTests {
 
@@ -70,6 +74,7 @@ public class ReqresInTests {
                 .body("token", is("QpwL5tke4Pnpja7X4"));
 
     }
+
     @Disabled
     @Test
     void successfullRegTest() {
@@ -283,5 +288,22 @@ public class ReqresInTests {
 
     }
 
+    @Test
+    void succsessfulRegisterTestWithSpec() {
 
+        RegisterBodyPojoModels regData = new RegisterBodyPojoModels("eve.holt@reqres.in", "pistol");
+
+        RegisterResponsePojoModel response =
+                given(registerRequestSpec)
+                        .body(regData)
+                        .when()
+                        .post()
+                        .then()
+                        .spec(registerResponseSpecStatusCode200)
+                        .extract().as(RegisterResponsePojoModel.class);
+
+        assertEquals( 4, response.getId());
+        assertEquals( "QpwL5tke4Pnpja7X4", response.getToken());
+
+    }
 }
