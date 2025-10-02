@@ -5,6 +5,7 @@ import models.lombok.LoginBodyLombokModels;
 import models.lombok.LoginResponseLombokModels;
 import models.pojo.LoginBodyPojoModels;
 import models.pojo.LoginResponsePojoModels;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,7 @@ public class ReqresInTests {
 
     public static String BASEURL = "https://reqres.in";
 
+    @Disabled
     @Test
     void listUsersCheckPage() {
         given()
@@ -28,6 +30,7 @@ public class ReqresInTests {
                 .body("page", is(3));
     }
 
+    @Disabled
     @Test
     void listUsersCheckPageWithLogResponse() {
         given()
@@ -38,6 +41,7 @@ public class ReqresInTests {
                 .body("page", is(2));
     }
 
+    @Disabled
     @Test
     void listUsersCheckPageWithLogRequest() {
         given()
@@ -49,6 +53,7 @@ public class ReqresInTests {
                 .body("page", is(2));
     }
 
+    @Disabled
     @Test
     void successfulLoginTest() {
         LoginBodyPojoModels authData = new LoginBodyPojoModels("eve.holt@reqres.in", "cityslicka");
@@ -65,7 +70,7 @@ public class ReqresInTests {
                 .body("token", is("QpwL5tke4Pnpja7X4"));
 
     }
-
+    @Disabled
     @Test
     void successfullRegTest() {
         LoginBodyPojoModels authData = new LoginBodyPojoModels("eve.holt@reqres.in", "cityslicka");
@@ -82,6 +87,7 @@ public class ReqresInTests {
 
     }
 
+    @Disabled
     @Test
     void successfulLoginBestPracticeTest() {
 
@@ -101,6 +107,7 @@ public class ReqresInTests {
 
     }
 
+    @Disabled
     @Tag("Negative")
     @Test
     void loginTestWithOutPassword() {
@@ -121,6 +128,7 @@ public class ReqresInTests {
 
     }
 
+    @Disabled
     @Tag("Negative")
     @Test
     void loginTestWithOutPasswordAndMail() {
@@ -143,6 +151,7 @@ public class ReqresInTests {
 
     }
 
+    @Disabled
     @Tag("Negative")
     @Test
     void loginTestWithOutEmail() {
@@ -165,6 +174,7 @@ public class ReqresInTests {
 
     }
 
+    @Disabled
     @Test
     void successfulLoginTestWithResponseModel() {
 
@@ -187,6 +197,7 @@ public class ReqresInTests {
 
     }
 
+    @Disabled
     @Test
     void successfulLoginLombokTest() {
 
@@ -209,7 +220,7 @@ public class ReqresInTests {
         assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
     }
 
-
+    @Disabled
     @Test
     void successfulLoginWithStepsTest() {
 

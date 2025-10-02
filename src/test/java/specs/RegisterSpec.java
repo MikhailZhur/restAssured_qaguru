@@ -10,23 +10,23 @@ import static io.restassured.filter.log.LogDetail.BODY;
 import static io.restassured.filter.log.LogDetail.STATUS;
 import static io.restassured.http.ContentType.JSON;
 
-public class LoginSpec {
-    public static RequestSpecification loginRequestSpec = with()
+public class RegisterSpec {
+    public static RequestSpecification registerRequestSpec = with()
             .filter(new AllureRestAssured())
             .header("x-api-key", "reqres-free-v1")
             .log().uri()
             .contentType(JSON)
             .baseUri("https://reqres.in")
-            .basePath("/api/login");
+            .basePath("/api/register");
 
-    public static ResponseSpecification loginResponseSpecStatusCode200 = new ResponseSpecBuilder()
+    public static ResponseSpecification registerResponseSpecStatusCode200 = new ResponseSpecBuilder()
             .expectStatusCode(200)
             .log(STATUS)
             .log(BODY)
             .build();
 
 
-    public static ResponseSpecification loginResponseSpecStatusCode400 = new ResponseSpecBuilder()
+    public static ResponseSpecification registerResponseSpecStatusCode400 = new ResponseSpecBuilder()
             .expectStatusCode(400)
             .log(STATUS)
             .log(BODY)
