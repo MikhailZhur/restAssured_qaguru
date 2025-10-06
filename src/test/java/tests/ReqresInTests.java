@@ -17,8 +17,7 @@ import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static specs.LoginSpec.*;
-import static specs.RegisterSpec.registerRequestSpec;
-import static specs.RegisterSpec.registerResponseSpecStatusCode200;
+import static specs.RegisterSpec.*;
 
 public class ReqresInTests {
 
@@ -289,7 +288,7 @@ public class ReqresInTests {
     }
 
     @Test
-    void succsessfulRegisterTestWithSpec() {
+    void successfulRegisterTestWithSpec() {
 
         RegisterBodyPojoModels regData = new RegisterBodyPojoModels("eve.holt@reqres.in", "pistol");
 
@@ -304,6 +303,42 @@ public class ReqresInTests {
 
         assertEquals( 4, response.getId());
         assertEquals( "QpwL5tke4Pnpja7X4", response.getToken());
+
+    }
+
+    @Test
+    void unsuccessfulRegisterTestWithSpec() {
+
+        RegisterBodyPojoModels regData = new RegisterBodyPojoModels("eve.holt@reqres.in",null);
+
+        RegisterResponsePojoModel response =
+                given(registerRequestSpec)
+                        .body(regData)
+                        .when()
+                        .post()
+                        .then()
+                        .spec(registerResponseSpecStatusCode400)
+                        .extract().as(RegisterResponsePojoModel.class);
+
+        assertEquals( "Missing password", response.getError());
+
+    }
+
+    @Test
+    void unsuccessfulRegisterTestWithOutEmail() {
+
+        RegisterBodyPojoModels regData = new RegisterBodyPojoModels(null,"eve.holt@reqres.in");
+
+        RegisterResponsePojoModel response =
+                given(registerRequestSpec)
+                        .body(regData)
+                        .when()
+                        .post()
+                        .then()
+                        .spec(registerResponseSpecStatusCode400)
+                        .extract().as(RegisterResponsePojoModel.class);
+
+        assertEquals( "Missing email or username", response.getError());
 
     }
 }
