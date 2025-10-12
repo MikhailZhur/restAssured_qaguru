@@ -16,6 +16,8 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static specs.DeleteSpec.deleteRequestSpec;
+import static specs.DeleteSpec.deleteResponseSpecStatusCode204;
 import static specs.LoginSpec.*;
 import static specs.RegisterSpec.*;
 
@@ -301,15 +303,15 @@ public class ReqresInTests {
                         .spec(registerResponseSpecStatusCode200)
                         .extract().as(RegisterResponsePojoModel.class);
 
-        assertEquals( 4, response.getId());
-        assertEquals( "QpwL5tke4Pnpja7X4", response.getToken());
+        assertEquals(4, response.getId());
+        assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
 
     }
 
     @Test
     void unsuccessfulRegisterTestWithSpec() {
 
-        RegisterBodyPojoModels regData = new RegisterBodyPojoModels("eve.holt@reqres.in",null);
+        RegisterBodyPojoModels regData = new RegisterBodyPojoModels("eve.holt@reqres.in", null);
 
         RegisterResponsePojoModel response =
                 given(registerRequestSpec)
@@ -320,14 +322,14 @@ public class ReqresInTests {
                         .spec(registerResponseSpecStatusCode400)
                         .extract().as(RegisterResponsePojoModel.class);
 
-        assertEquals( "Missing password", response.getError());
+        assertEquals("Missing password", response.getError());
 
     }
 
     @Test
     void unsuccessfulRegisterTestWithOutEmail() {
 
-        RegisterBodyPojoModels regData = new RegisterBodyPojoModels(null,"eve.holt@reqres.in");
+        RegisterBodyPojoModels regData = new RegisterBodyPojoModels(null, "eve.holt@reqres.in");
 
         RegisterResponsePojoModel response =
                 given(registerRequestSpec)
@@ -338,7 +340,16 @@ public class ReqresInTests {
                         .spec(registerResponseSpecStatusCode400)
                         .extract().as(RegisterResponsePojoModel.class);
 
-        assertEquals( "Missing email or username", response.getError());
+        assertEquals("Missing email or username", response.getError());
 
+    }
+
+    @Test
+    void successfulDeleteRequestUserTest() {
+        given(deleteRequestSpec)
+                .when()
+                .delete()
+                .then()
+                .spec(deleteResponseSpecStatusCode204);
     }
 }
